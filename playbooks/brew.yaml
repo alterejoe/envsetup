@@ -1,0 +1,40 @@
+# community.general.homebrew:
+#     name: foo
+#     state: presentq
+- name: Brew setup
+  hosts: localhost
+  gather_facts: true
+  vars:
+    version: 1.23.4
+  tasks:
+    - name: Check if Homebrew is already installed
+      command: which brew
+      register: brew_check
+      ignore_errors: true
+
+    - name: Install dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - curl
+        - git
+      when: brew_check.rc != 0
+      become: true
+
+    - name: Install Homebrew
+      shell: |
+        NONINTERACTIVE=1
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      when: brew_check.rc != 0
+      become_user: "{{ ansible_user_id }}"
+
+    # echo >> /home/altjoe/.bashrc
+    # echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/altjoe/.bashrc
+    # eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    - name: Ensure Homebrew is in the path
+      shell: |
+        echo >> /home/altjoe/.bashrc
+        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/altjoe/.bashrc
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+      when: brew_check.rc != 0

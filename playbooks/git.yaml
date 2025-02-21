@@ -1,0 +1,12 @@
+- name: Git rebase setting
+  hosts: localhost
+  gather_facts: true
+  vars:
+    version: 1.23.4
+  tasks:
+    - name: git config pull.rebase true
+      git_config:
+        name: pull.rebase
+        scope: global
+        value: true 
+

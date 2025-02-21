@@ -1,0 +1,8 @@
+- name: Go Setup
+  hosts: localhost
+  gather_facts: true
+  vars:
+    version: 1.20.1
+  tasks:
+    - name: go install github.com/a-h/templ/cmd/templ@latest
+      shell: go install github.com/a-h/templ/cmd/templ@latest

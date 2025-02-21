@@ -1,0 +1,40 @@
+- name: Go Setup
+  hosts: localhost
+  become: true
+  gather_facts: true
+  vars:
+    version: 1.23.4
+  tasks:
+    - name: Download go tar file
+      command: wget https://go.dev/dl/go{{version}}.linux-amd64.tar.gz
+
+    - name: Delete previous installation
+      command: rm -rf /usr/local/go
+      become: true
+
+    - name: Extract and move new go folder to /usr/local
+      command: tar -C /usr/local -xzf go{{version}}.linux-amd64.tar.gz
+      become: true
+
+    - name: Delete downloaded tar file
+      shell: rm -rf go{{version}}.linux-amd64.tar.gz*
+    
+    - name: Add go to path in .profile
+      ansible.builtin.lineinfile:
+        path: /home/altjoe/.profile
+        line: "export PATH=$PATH:/usr/local/go/bin"
+        create: yes
+        state: present
+
+    - name: Add go to .bashrc
+      ansible.builtin.lineinfile:
+        path: /home/altjoe/.bashrc
+        line: "export PATH=$PATH:/usr/local/go/bin"
+        create: yes
+        state: present
+
+    - name: Remove go tar file (if still exists)
+      file:
+        path: go{{ version }}.linux-amd64.tar.gz
+        state: absent
+
