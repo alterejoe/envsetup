@@ -1,0 +1,24 @@
+- name: kubernetes install 
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: k8s status
+      ansible.builtin.command: k8s status
+      when: ansible_distribution == "Ubuntu"
+      register: k8s_status_output
+      become: true
+    
+    - name: Show k8s status
+      ansible.builtin.debug:
+        var: k8s_status_output.stdout
+    
+    - name: k8s kubectl get all
+      ansible.builtin.command: k8s kubectl get all --all-namespaces
+      when: ansible_distribution == "Ubuntu"
+      register: k8s_get_all_output
+      become: true
+    
+    - name: Show kubectl output
+      ansible.builtin.debug:
+        var: k8s_get_all_output.stdout

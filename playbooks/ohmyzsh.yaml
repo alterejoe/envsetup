@@ -1,0 +1,43 @@
+# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# 
+- name: oh my zsh setup
+  hosts: localhost
+  # become: true
+  gather_facts: yes
+
+
+  vars:
+    version: 1.23.4
+    ansible_user: "{{ lookup('env', 'USER') }}"
+    
+  tasks:
+    - name: usernmame debug
+      debug:
+        msg: "{{ ansible_user }}"
+
+    - name: check if zsh is installed
+      command: zsh --version
+      register: zsh_version
+      ignore_errors: true
+
+    - name: install zsh
+      apt:
+        name: zsh
+        state: present
+      become: true
+      when: zsh_version.rc != 0
+
+    - name: install oh my zsh
+      shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      when: zsh_version.rc != 0
+  
+    - name: change default shell to zsh
+      user:
+        name: "{{ ansible_user }}"
+        shell: /bin/zsh
+      become: true
+
+
+
+      
+

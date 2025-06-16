@@ -1,19 +1,36 @@
 - name: Brew setup
-  hosts: localhost
+  hosts: all
   gather_facts: true
   vars:
     version: 1.23.4
-  tasks:
-  - name: install homebrew
-    community.general.homebrew:
-      name: lazygit
-      state: present
+    brew_bin: "{{ ansible_env.HOME }}/.linuxbrew/bin"
 
-  - community.general.homebrew:
-      name: gh 
-      state: present
-  
-  - name: install redis cli
-    community.general.homebrew:
-      name: redis
-      state: present
+  tasks:
+    # - name: install lazygit
+    #   community.general.homebrew:
+    #     name: lazygit
+    #     state: present
+    #   environment:
+    #     PATH: "{{ brew_bin }}:{{ ansible_env.PATH }}"
+    #
+    # - name: install gh
+    #   community.general.homebrew:
+    #     name: gh
+    #     state: present
+    #   environment:
+    #     PATH: "{{ brew_bin }}:{{ ansible_env.PATH }}"
+  #   list
+    - name: install list of brew packages
+      community.general.homebrew:
+        name: "{{ item }}"
+        state: present
+      environment:
+        PATH: "{{ brew_bin }}:{{ ansible_env.PATH }}"
+      loop:
+        - gh
+        - lazygit
+        - ripgrep
+        - fzf
+        - xclip
+        - gcc
+

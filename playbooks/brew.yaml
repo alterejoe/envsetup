@@ -2,10 +2,8 @@
 #     name: foo
 #     state: presentq
 - name: Brew setup
-  hosts: localhost
+  hosts: all
   gather_facts: true
-  vars:
-    version: 1.23.4
   tasks:
     - name: Check if Homebrew is already installed
       command: which brew
@@ -22,19 +20,37 @@
       when: brew_check.rc != 0
       become: true
 
-    - name: Install Homebrew
-      shell: |
-        NONINTERACTIVE=1
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      when: brew_check.rc != 0
-      become_user: "{{ ansible_user_id }}"
+    - name: Clone Homebrew repo (user-local install)
+      git:
+        repo: https://github.com/Homebrew/brew
+        dest: "{{ ansible_env.HOME }}/.linuxbrew/Homebrew"
+        version: master
+      become: false
 
-    # echo >> /home/altjoe/.bashrc
-    # echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/altjoe/.bashrc
-    # eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    - name: Ensure Homebrew is in the path
-      shell: |
-        echo >> /home/altjoe/.bashrc
-        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/altjoe/.bashrc
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-      when: brew_check.rc != 0
+    - name: Create Homebrew directory structure
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ ansible_env.HOME }}/.linuxbrew/bin"
+        - "{{ ansible_env.HOME }}/.linuxbrew/etc"
+        - "{{ ansible_env.HOME }}/.linuxbrew/sbin"
+        - "{{ ansible_env.HOME }}/.linuxbrew/var"
+      become: false
+
+    - name: Create symlink to brew
+      file:
+        src: "{{ ansible_env.HOME }}/.linuxbrew/Homebrew/bin/brew"
+        dest: "{{ ansible_env.HOME }}/.linuxbrew/bin/brew"
+        state: link
+      become: false
+
+    - name: Add Homebrew to PATH
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.bashrc"
+        line: 'eval "$($HOME/.linuxbrew/bin/brew shellenv)"'
+        create: yes
+      become: false
+
+

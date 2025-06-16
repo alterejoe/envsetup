@@ -1,0 +1,38 @@
+- name: docker post install 
+  hosts: all
+  gather_facts: true
+  tasks:
+# sudo groupadd docker
+    - name: add docker group 
+      ansible.builtin.group:
+        name: docker
+        state: present
+      become: true
+# sudo usermod -aG docker $USER
+    - name: add user to docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+      become: true
+ # newgrp docker
+    - name: restart docker service
+      ansible.builtin.systemd:
+        name: docker
+        state: restarted
+      become: true
+
+    - name: ensure docker service is enabled
+      ansible.builtin.systemd:
+        name: docker
+        enabled: true
+      become: true
+
+    - name: verify docker installation
+      ansible.builtin.command: docker run hello-world
+      register: docker_test
+      ignore_errors: yes
+
+    # - name: display docker test result
+    #   ansible.builtin.debug:
+    #     var: docker_test.stdout_lines

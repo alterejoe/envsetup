@@ -12,10 +12,10 @@ install-go:
 	
 	echo "Restart shell to source ~/.bashrc"
 
-install-brew:
-	ansible-playbook -i inventory.yaml playbooks/brew.yaml --ask-become-pass
+install-brew-%:
+	ansible-playbook -i inventory.yaml playbooks/brew.yaml --limit $* --ask-become-pass
 
-install-brew-packages:
+install-brew-packages-%:
 	ansible-playbook -i inventory.yaml playbooks/brew-packages.yaml --ask-become-pass
 
 
@@ -46,3 +46,7 @@ install-openssh:
 
 install-go-migrate:
 	brew install golang-migrate
+
+
+install-proxmox:
+	ansible-playbook -i inventory.yaml playbooks/ubuntu-vm.yaml --ask-become-pass

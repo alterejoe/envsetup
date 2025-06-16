@@ -1,0 +1,4 @@
+- name: docker swarm init
+  hosts: all
+  gather_facts: true
+  tasks:
