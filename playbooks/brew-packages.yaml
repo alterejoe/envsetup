@@ -4,10 +4,16 @@
   vars:
     version: 1.23.4
   tasks:
-  - community.general.homebrew:
+  - name: install homebrew
+    community.general.homebrew:
       name: lazygit
       state: present
 
   - community.general.homebrew:
       name: gh 
+      state: present
+  
+  - name: install redis cli
+    community.general.homebrew:
+      name: redis
       state: present

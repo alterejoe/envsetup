@@ -1,0 +1,11 @@
+- name: Sqlite install
+  hosts: localhost
+  become: true
+  gather_facts: true
+  vars:
+    version: 3.49.1
+  tasks:
+    - name: Install sqlite
+      apt:
+        name: sqlite3
+        state: present
