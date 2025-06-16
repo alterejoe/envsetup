@@ -6,20 +6,6 @@
     brew_bin: "{{ ansible_env.HOME }}/.linuxbrew/bin"
 
   tasks:
-    # - name: install lazygit
-    #   community.general.homebrew:
-    #     name: lazygit
-    #     state: present
-    #   environment:
-    #     PATH: "{{ brew_bin }}:{{ ansible_env.PATH }}"
-    #
-    # - name: install gh
-    #   community.general.homebrew:
-    #     name: gh
-    #     state: present
-    #   environment:
-    #     PATH: "{{ brew_bin }}:{{ ansible_env.PATH }}"
-  #   list
     - name: install list of brew packages
       community.general.homebrew:
         name: "{{ item }}"
@@ -33,4 +19,3 @@
         - fzf
         - xclip
         - gcc
-

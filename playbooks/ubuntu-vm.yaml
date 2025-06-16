@@ -22,6 +22,8 @@
           - qemu-guest-agent
           - npm 
           - nodejs
+          - python3.12-venv
+          - unzip
         state: present
         update_cache: true
       become: true

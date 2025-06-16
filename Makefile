@@ -4,9 +4,9 @@ run:
 settings-git:
 	ansible-playbook -i inventory.yaml playbooks/git.yaml
 
-install-go:
+install-go-%:
 	#verbose
-	ansible-playbook  -i inventory.yaml playbooks/go.yaml --ask-become-pass
+	ansible-playbook  -i inventory.yaml playbooks/go.yaml --limit $* --ask-become-pass
 
 	make source-go
 	
