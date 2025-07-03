@@ -1,5 +1,5 @@
 - name: Ubuntu proxmox vm
-  hosts: rack 
+  hosts: all
   gather_facts: true
   tasks:
     # - name: install qemu 
@@ -18,12 +18,7 @@
     - name: install list of apts
       ansible.builtin.apt:
         name:
-          - git
           - qemu-guest-agent
-          - npm 
-          - nodejs
-          - python3.12-venv
-          - unzip
         state: present
         update_cache: true
       become: true
@@ -38,20 +33,6 @@
         name: cloud-init
         state: present
       become: true
-    - name: snap install neovim
-      community.general.snap:
-        name: nvim
-        state: present
-        classic: true
-      become: true
-    - name: git clone git@github.com:alterejoe/notes.git
-      ansible.builtin.git:
-        repo: git@github.com:alterejoe/notes.git
-        dest: /home/altjoe/notes
-    - name: git clone git@github.com:alterejoe/notes.git
-      ansible.builtin.git:
-        repo: git@github.com:alterejoe/nvim-config.git
-        dest: /home/altjoe/.config/nvim
       
 
       

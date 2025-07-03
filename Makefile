@@ -48,5 +48,20 @@ install-go-migrate:
 	brew install golang-migrate
 
 
-install-proxmox:
-	ansible-playbook -i inventory.yaml playbooks/ubuntu-vm.yaml --ask-become-pass
+install-proxmox-%:
+	ansible-playbook -i inventory.yaml playbooks/proxmox.yaml --limit $* --ask-become-pass
+
+install-nvim-%:
+	ansible-playbook -i inventory.yaml playbooks/nvim.yaml --limit $* --ask-become-pass
+
+install-all-%:
+	# make install-go-$*
+	make install-proxmox-$*
+	make install-brew-$*
+	make install-brew-packages-$*
+	make install-nvim-$*
+
+# wsl-setup:
+# 	install wslu in ubuntu and add to your zshrc or bashrc
+# 	export BROWSER=wslview
+

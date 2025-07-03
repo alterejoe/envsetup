@@ -19,3 +19,5 @@
         - fzf
         - xclip
         - gcc
+        - sqlc
+        - pgformatter
